@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.0.0" type="plugin" group="api" method="upgrade">
+    <name>PLG_API_GSKI</name>
+    <version>1.0.6</version>
+    <creationDate>04/01/2021</creationDate>
+    <author></author> 
+    <description></description>
+    <files>
+        <filename plugin="gski">gski.php</filename>
+        <folder>gski</folder> 
+    </files>
+    <languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.plg_api_gski.ini</language>
+		<language tag="en-GB">en-GB/en-GB.plg_api_gski.sys.ini</language>
+	</languages>
+	
+</extension> 
+
