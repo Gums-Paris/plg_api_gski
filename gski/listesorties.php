@@ -5,8 +5,6 @@ defined('_JEXEC') or die;
 jimport('joomla.plugin.plugin');
 jimport('joomla.application.component.model');
 
-JLoader::import('sortiesinscritslist', JPATH_ROOT.'/components/com_sorties/models');
-JLoader::import('sortieslist', JPATH_ROOT.'/components/com_sorties/models');
 
 class GskiApiResourceListesorties extends ApiResource
 {
@@ -16,15 +14,19 @@ class GskiApiResourceListesorties extends ApiResource
 
 	public function get()
 	{
+		JModelLegacy::addIncludePath(JPATH_SITE . '/components/com_sorties/models');
+
 		require_once ( JPATH_ROOT.'/components/com_sorties/assets/DateSortie.class.php' );      
 		
 		$modelList 		= JModelLegacy::getInstance('sortieslist', 'SortiesModel');
 		$result 		= array();
+		$resultat       = new \stdclass;	
         $modelList->_activite = 1;
         $info 			= $modelList->getData();
 // pour mémoire, ceci est la manière d'obtenir l'objet user correspondant au jeton si on en a besoin
 //		$user 			= $this->plugin->get('user');
- 
+
+ //echo' info <pre>';print_r($info);echo'</pre>';exit(0);
 		if (!empty ($info)){
 			
 			foreach ($info as $key => $d) {
@@ -42,14 +44,14 @@ class GskiApiResourceListesorties extends ApiResource
 				$contactsResCar = $this->getResponsable($d->responsable);
 				$result[$key]->email_rescar = $contactsResCar->email;
 				$result[$key]->tel_rescar = $contactsResCar->tel; 
-			
- //echo'<pre>';print_r($result[$key]);echo'</pre>';			
 			}
+		    $resultat = (object)$result;			 
 		}else{
-			$result = null;
+			$resultat = null;
 		}
+// echo' resultat <pre>';print_r($resultat);echo'</pre>';exit(0);			
 		 
-		$this->plugin->setResponse( $result );
+		$this->plugin->setResponse( $resultat );
 	}
 
 	  /**
@@ -58,6 +60,7 @@ class GskiApiResourceListesorties extends ApiResource
 	  function getResponsable($id)
 	  {
 		$db = JFactory::getDBO();
+		$query	= $db->getQuery(true);
 		$query = "select user.name, user.email, 
 		if(cb_mobile<>'', cb_mobile, cb_telfixe ) as tel 
 		from  #__users as user 

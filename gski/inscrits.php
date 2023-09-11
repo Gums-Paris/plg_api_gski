@@ -5,8 +5,10 @@ defined('_JEXEC') or die;
 jimport('joomla.plugin.plugin');
 jimport('joomla.application.component.model');
 
-JLoader::import('sortiesinscritslist', JPATH_ROOT.'/components/com_sorties/models');
-JLoader::import('sortieslist', JPATH_ROOT.'/components/com_sorties/models');
+use Joomla\CMS\Factory;
+
+//JLoader::import('sortiesinscritslist', JPATH_ROOT.'/components/com_sorties/models');
+//JLoader::import('sortieslist', JPATH_ROOT.'/components/com_sorties/models');
 
 class GskiApiResourceInscrits extends ApiResource
 {
@@ -16,13 +18,16 @@ class GskiApiResourceInscrits extends ApiResource
 
 	public function get()
 	{
+		JModelLegacy::addIncludePath(JPATH_SITE . '/components/com_sorties/models');
+		
 		require_once ( JPATH_ROOT.'/components/com_sorties/assets/DateSortie.class.php' );      
 		
-        $input = JFactory::getApplication()->input;
+        $input = Factory::getApplication()->input;
         $sortieId = $input->getInt('sortieid', 0);
 		$modelInscrits 	= JModelLegacy::getInstance('sortiesinscritslist', 'SortiesModel');
 		$modelList 		= JModelLegacy::getInstance('sortieslist', 'SortiesModel');
 		$result 		= array();
+		$resultat       = new \stdclass;	
         $info 			= $modelList->getData();
 // pour mémoire, ceci est la manière d'obtenir l'objet user correspondant au jeton si on en a besoin :
 //		$user 			= $this->plugin->get('user');
@@ -66,14 +71,16 @@ class GskiApiResourceInscrits extends ApiResource
 //					$result[$key]->tel = $d->tel;
 					$result[$key]->ordre = $d->ordre;
 				}
+				$resultat = (object)$result;			 
+				
 //			 echo'<pre>';print_r($result);echo'</pre>';exit(0);			
 			}else{ 
-				$result = null; // parce que groupes non publiés
+				$resultat = null; // parce que groupes non publiés
 			}	
 		}else{
-			$result = null; // parce que liste sorties est vide (c'est pas possible pour GumsSki qui dans ce cas ne demande pas les participants)
+			$resultat = null; // parce que liste sorties est vide (c'est pas possible pour GumsSki qui dans ce cas ne demande pas les participants)
 		}
-		$this->plugin->setResponse( $result );
+		$this->plugin->setResponse( $resultat );
 	}
  
 

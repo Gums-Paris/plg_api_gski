@@ -8,9 +8,9 @@ jimport('joomla.user.user');
 
 use \Joomla\CMS\Factory;
 
-JLoader::import('logistikform', JPATH_ROOT.'/components/com_sorties/models');
-JLoader::import('logistik', JPATH_ROOT.'/components/com_sorties/models');
-JLoader::import('sorties', JPATH_ROOT.'/components/com_sorties/helpers');
+//JLoader::import('logistikform', JPATH_ROOT.'/components/com_sorties/models');
+//JLoader::import('logistik', JPATH_ROOT.'/components/com_sorties/models');
+//JLoader::import('sorties', JPATH_ROOT.'/components/com_sorties/helpers');
 
 class GskiApiResourceLogistique extends ApiResource
 {
@@ -18,7 +18,11 @@ class GskiApiResourceLogistique extends ApiResource
 	private $data;
 
 	public function get()
-	{
+	{		
+		JModelLegacy::addIncludePath(JPATH_SITE . '/components/com_sorties/models');
+		
+		require_once ( JPATH_ROOT.'/components/com_sorties/helpers/sorties.php' );      
+
 		$model = JModelLegacy::getInstance('Logistik', 'SortiesModel');
 		$modelForm = JModelLegacy::getInstance('Logistikform', 'SortiesModel');
 
@@ -33,28 +37,28 @@ class GskiApiResourceLogistique extends ApiResource
 		try
 		{
 			$data = $model->getItem();
+// echo' data <pre>';print_r($data);echo'</pre>';exit(0);
 			if (!empty($data)) {
-				foreach($data as $key => $value) {
-					$result[$key] = trim($value);
-				}
-			$result['canedit'] = $canEdit;
-				
+			$data->canedit  =  $canEdit;	
 			$id = $data->id;
 			if ($input->getWord('task', '')=='edit' and $id>0){ $modelForm->checkout($id);}
 			
 			}else{
-				$result = null;
+			$data = null;
 			}
 		}
 		catch (Exception $e)
 		{
-			$result = $e->getCode();
+			$data->erreur  =  $e->getCode();
 		}
-		$this->plugin->setResponse( $result );
+		$this->plugin->setResponse( $data );
 	}
 
 	public function post()
 	{
+		JModelLegacy::addIncludePath(JPATH_SITE . '/components/com_sorties/models');
+		
+		require_once ( JPATH_ROOT.'/components/com_sorties/helpers/sorties.php' );      
 		$user = $this->plugin->get('user');
 		$input = Factory::getApplication()->input;
 		$data = $input->post->getArray([

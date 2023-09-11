@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.0.0" type="plugin" group="api" method="upgrade">
     <name>PLG_API_GSKI</name>
-    <version>1.0.6</version>
+    <version>2.0.0</version>
     <creationDate>04/01/2021</creationDate>
     <author></author> 
     <description></description>

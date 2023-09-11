@@ -3,4 +3,4 @@ Pour chaque ressource à laquelle on accède il faut fournir un script avec les 
 
 L'URL  https://docs.techjoomla.com/com_api/  donne accès à un mode d'emploi succinct de com_api et décrit en détail la manière d'écrire un plugin pour com_api
 
-La version du plugin gski est 1.0.6
+Cette version du plugin gski est 2.0.0 pour accompagner le passage à Joomla 4
