@@ -7,6 +7,7 @@ jimport('joomla.application.component.model');
 jimport('joomla.user.user');
 
 use \Joomla\CMS\Factory;
+use \Joomla\CMS\MVC\Model\FormModel;
 
 //JLoader::import('logistikform', JPATH_ROOT.'/components/com_sorties/models');
 //JLoader::import('logistik', JPATH_ROOT.'/components/com_sorties/models');
@@ -20,11 +21,13 @@ class GskiApiResourceLogistique extends ApiResource
 	public function get()
 	{		
 		JModelLegacy::addIncludePath(JPATH_SITE . '/components/com_sorties/models');
+		FormModel::addIncludePath(JPATH_SITE . '/components/com_sorties/models');
 		
 		require_once ( JPATH_ROOT.'/components/com_sorties/helpers/sorties.php' );      
 
 		$model = JModelLegacy::getInstance('Logistik', 'SortiesModel');
-		$modelForm = JModelLegacy::getInstance('Logistikform', 'SortiesModel');
+//		$modelForm = JModelLegacy::getInstance('Logistikform', 'SortiesModel');
+		$modelForm = FormModel::getInstance('Logistikform', 'SortiesModel');		
 
 // on a besoin de savoir si ce user a le droit d'éditer pour lui présenter ou pas le bouton 'Modifier' dans GumsSki/logistique
 		$user = $this->plugin->get('user');
@@ -56,7 +59,8 @@ class GskiApiResourceLogistique extends ApiResource
 
 	public function post()
 	{
-		JModelLegacy::addIncludePath(JPATH_SITE . '/components/com_sorties/models');
+//		JModelLegacy::addIncludePath(JPATH_SITE . '/components/com_sorties/models');
+		FormModel::addIncludePath(JPATH_SITE . '/components/com_sorties/models');
 		
 		require_once ( JPATH_ROOT.'/components/com_sorties/helpers/sorties.php' );      
 		$user = $this->plugin->get('user');
@@ -77,7 +81,8 @@ class GskiApiResourceLogistique extends ApiResource
 		if (SortiesHelper::canEditLogistique($user->id, $data['sortieid']))
 		{  
 			$id   = $input->getInt('id', 0);
-			$modelForm = JModelLegacy::getInstance('Logistikform', 'SortiesModel');
+//			$modelForm = JModelLegacy::getInstance('Logistikform', 'SortiesModel');
+			$modelForm = FormModel::getInstance('Logistikform', 'SortiesModel');		
 			$task = $input-> getString ('task', '');
 			
 // task=checkin	 ne touche pas aux données de la base, permet de faire un checkin de la ligne en cours d'édition 
