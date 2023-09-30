@@ -7,9 +7,6 @@ jimport('joomla.application.component.model');
 
 use Joomla\CMS\Factory;
 
-//JLoader::import('sortiesinscritslist', JPATH_ROOT.'/components/com_sorties/models');
-//JLoader::import('sortieslist', JPATH_ROOT.'/components/com_sorties/models');
-
 class GskiApiResourceInscrits extends ApiResource
 {
 	private $result;

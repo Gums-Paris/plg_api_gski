@@ -23,7 +23,7 @@ class GskiApiResourceListesorties extends ApiResource
 		$resultat       = new \stdclass;	
         $modelList->_activite = 1;
         $info 			= $modelList->getData();
-// pour mémoire, ceci est la manière d'obtenir l'objet user correspondant au jeton si on en a besoin
+// pour mémoire, ceci est la manière d'obtenir l'objet user correspondant au jeton si on en a besoin :
 //		$user 			= $this->plugin->get('user');
 
  //echo' info <pre>';print_r($info);echo'</pre>';exit(0);
@@ -45,7 +45,7 @@ class GskiApiResourceListesorties extends ApiResource
 				$result[$key]->email_rescar = $contactsResCar->email;
 				$result[$key]->tel_rescar = $contactsResCar->tel; 
 			}
-		    $resultat = (object)$result;			 
+		    $resultat = (object)$result;	
 		}else{
 			$resultat = null;
 		}

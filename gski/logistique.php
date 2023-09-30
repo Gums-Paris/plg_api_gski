@@ -9,10 +9,13 @@ jimport('joomla.user.user');
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\MVC\Model\FormModel;
 
-//JLoader::import('logistikform', JPATH_ROOT.'/components/com_sorties/models');
-//JLoader::import('logistik', JPATH_ROOT.'/components/com_sorties/models');
-//JLoader::import('sorties', JPATH_ROOT.'/components/com_sorties/helpers');
-
+/* noter que :
+ * le résultat renvoyé au demandeur par GET ou POST doit toujours être un objet (pas un array) 
+ * sinon erreur "utilisation de la method clone sur un non-objet"
+ * 
+ * les données envoyées par POST doivent être x-www-form-urlencoded (pas objet json envoyé en raw)
+ */
+ 
 class GskiApiResourceLogistique extends ApiResource
 {
 
@@ -26,8 +29,7 @@ class GskiApiResourceLogistique extends ApiResource
 		require_once ( JPATH_ROOT.'/components/com_sorties/helpers/sorties.php' );      
 
 		$model = JModelLegacy::getInstance('Logistik', 'SortiesModel');
-//		$modelForm = JModelLegacy::getInstance('Logistikform', 'SortiesModel');
-		$modelForm = FormModel::getInstance('Logistikform', 'SortiesModel');		
+/		$modelForm = FormModel::getInstance('Logistikform', 'SortiesModel');		
 
 // on a besoin de savoir si ce user a le droit d'éditer pour lui présenter ou pas le bouton 'Modifier' dans GumsSki/logistique
 		$user = $this->plugin->get('user');
@@ -40,10 +42,11 @@ class GskiApiResourceLogistique extends ApiResource
 		try
 		{
 			$data = $model->getItem();
-// echo' data <pre>';print_r($data);echo'</pre>';exit(0);
+
 			if (!empty($data)) {
 			$data->canedit  =  $canEdit;	
 			$id = $data->id;
+// si on récupère les données pour pouvoir les modifier il faut faire un checkout			
 			if ($input->getWord('task', '')=='edit' and $id>0){ $modelForm->checkout($id);}
 			
 			}else{
@@ -59,9 +62,8 @@ class GskiApiResourceLogistique extends ApiResource
 
 	public function post()
 	{
-//		JModelLegacy::addIncludePath(JPATH_SITE . '/components/com_sorties/models');
 		FormModel::addIncludePath(JPATH_SITE . '/components/com_sorties/models');
-		
+	
 		require_once ( JPATH_ROOT.'/components/com_sorties/helpers/sorties.php' );      
 		$user = $this->plugin->get('user');
 		$input = Factory::getApplication()->input;
@@ -81,18 +83,20 @@ class GskiApiResourceLogistique extends ApiResource
 		if (SortiesHelper::canEditLogistique($user->id, $data['sortieid']))
 		{  
 			$id   = $input->getInt('id', 0);
-//			$modelForm = JModelLegacy::getInstance('Logistikform', 'SortiesModel');
-			$modelForm = FormModel::getInstance('Logistikform', 'SortiesModel');		
+/			$modelForm = FormModel::getInstance('Logistikform', 'SortiesModel');		
 			$task = $input-> getString ('task', '');
+			
+			$retour = new \stdClass;	
 			
 // task=checkin	 ne touche pas aux données de la base, permet de faire un checkin de la ligne en cours d'édition 
 // dans le cas ou l'usager de GumsSki touche le bouton "Annuler"
 			if ($id>0 && $task == 'checkin') {
 				$modelForm->checkin($id);
-				$this->plugin->setResponse( $id );
+				$retour->retour	= $id;
+				$this->plugin->setResponse( $retour );
 			}else{
-// sauvegarde normale		
 				
+// sauvegarde normale						
 				if ($id>0)
 				{
 					$modelForm->checkout($id);
@@ -104,8 +108,9 @@ class GskiApiResourceLogistique extends ApiResource
 				{
 					$modelForm->checkin($result);
 				} 
+				$retour->retour = $result;
 				
-				$this->plugin->setResponse( $result );
+				$this->plugin->setResponse( $retour );
 			}  
 		}	
 		else
