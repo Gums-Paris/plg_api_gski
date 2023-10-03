@@ -29,7 +29,7 @@ class GskiApiResourceLogistique extends ApiResource
 		require_once ( JPATH_ROOT.'/components/com_sorties/helpers/sorties.php' );      
 
 		$model = JModelLegacy::getInstance('Logistik', 'SortiesModel');
-/		$modelForm = FormModel::getInstance('Logistikform', 'SortiesModel');		
+		$modelForm = FormModel::getInstance('Logistikform', 'SortiesModel');		
 
 // on a besoin de savoir si ce user a le droit d'éditer pour lui présenter ou pas le bouton 'Modifier' dans GumsSki/logistique
 		$user = $this->plugin->get('user');
@@ -83,7 +83,7 @@ class GskiApiResourceLogistique extends ApiResource
 		if (SortiesHelper::canEditLogistique($user->id, $data['sortieid']))
 		{  
 			$id   = $input->getInt('id', 0);
-/			$modelForm = FormModel::getInstance('Logistikform', 'SortiesModel');		
+			$modelForm = FormModel::getInstance('Logistikform', 'SortiesModel');		
 			$task = $input-> getString ('task', '');
 			
 			$retour = new \stdClass;	
