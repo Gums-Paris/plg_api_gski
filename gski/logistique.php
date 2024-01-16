@@ -70,6 +70,7 @@ class GskiApiResourceLogistique extends ApiResource
 		$data = $input->post->getArray([
 			'id'         => 'int',
 			'sortieid' => 'string',
+			'rdv_depart' => 'string',
 			'hotelchauffeurs'   => 'string',
 			'tphchauffeurs'  => 'string',
 			'dinerretour'    => 'string',
